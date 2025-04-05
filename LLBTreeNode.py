@@ -1,24 +1,16 @@
 from fontTools.misc.cython import returns
-
+from LLBTreeNodeData import LLBTreeNodeData
 from BTreeNode import BTreeNode
 
 class LLBTreeNode(BTreeNode):
 
     def __init__(self, key):
         super().__init__(key)
-        self.next = None
-        self.i = self
+        self.chain = LLBTreeNodeData(self)
 
     def __iter__(self):
-        self.i = self
-        return self
+        return iter(self.chain)
 
-    def __next__(self):
-        if self.i is None:
-            raise StopIteration
-        x = self.i
-        self.i = self.i.next
-        return x
-
-    def set_next(self, next):
-        self.next = next
+    def insert(self, data: LLBTreeNodeData):
+        data.set_next(self.chain)
+        self.chain = data

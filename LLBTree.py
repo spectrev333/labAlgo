@@ -31,31 +31,11 @@ class LLBTree(BTree):
         if previous is None:
             self.root = node
         elif is_duplicate: # node is same as previous
-
-            # attach previous parent to node
-            node.parent = previous.parent
-            if previous.parent is not None:
-                if previous.parent.left == previous:
-                    previous.parent.left = node
-                else:
-                    previous.parent.right = node
-
-            # preserve left and right subtrees
-            node.left = previous.left
-            node.right = previous.right
-
-            # append previous to node chain
-            node.set_next(previous)
-
-            # adjust child nodes
-            if node.left is not None:
-                node.left.parent = node
-            if node.right is not None:
-                node.right.parent = node
+            previous.insert(node.chain)
         elif node.key < previous.key:
             previous.left = node
         else:
             previous.right = node
 
     def find_all(self, key):
-        return list(iter(self.find(key))) # abuse python iterators
+        return list(iter(self.find(key)))
