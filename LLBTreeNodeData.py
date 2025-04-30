@@ -4,19 +4,13 @@ class LLBTreeNodeData:
     """
     def __init__(self, head):
         self.next = None
-        self.iterator = self
         self.head = head
 
     def __iter__(self):
-        self.iterator = self
-        return self
-
-    def __next__(self):
-        if self.iterator is None:
-            raise StopIteration
-        x = self.iterator
-        self.iterator = self.iterator.next
-        return x
+        current = self
+        while current is not None:
+            yield current
+            current = current.next
 
     def __repr__(self):
         return f"{self.head}"

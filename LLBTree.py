@@ -38,4 +38,5 @@ class LLBTree(BTree):
             previous.right = node
 
     def find_all(self, key):
-        return list(iter(self.find(key)))
+        node = self.find(key)
+        return node.chain
