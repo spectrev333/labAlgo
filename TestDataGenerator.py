@@ -37,13 +37,20 @@ class TestDataGenerator:
         data = []
         # Create unique elements
         unique_count = int(self.size * (1 - self.duplication_rate))
-        # Sample from range
-        unique_values = random.sample(range(*self.data_range), min(unique_count, self.data_range[1] - self.data_range[0]))
-        data.extend(unique_values)
 
-        # Choose k values from unique values population
-        duplicate_values = random.choices(unique_values, k=self.size - unique_count)
-        data.extend(duplicate_values)
+        if unique_count > 0:
+            # Sample from range
+            unique_values = random.sample(range(*self.data_range),
+                                          min(unique_count, self.data_range[1] - self.data_range[0]))
+            data.extend(unique_values)
+
+            # Choose k values from unique values population
+            duplicate_values = random.choices(unique_values, k=self.size - unique_count)
+            data.extend(duplicate_values)
+        else:
+            # If duplication rate is 100%, fill the list with a single random value
+            duplicate_value = random.choice(range(*self.data_range))
+            data = [duplicate_value] * self.size
 
         random.shuffle(data)
         return data
