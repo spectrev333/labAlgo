@@ -5,20 +5,19 @@ class BenchDataGenerator:
     A class for generating test data for binary search tree performance evaluation.
     """
 
-    def __init__(self, size, duplication_rate=0, duplicate_count=0, data_range=(1, 100)):
+    def __init__(self, size, duplication_rate=0, duplicate_count=0, data_range=None):
         """
         :arg size (int): The number of elements to generate.
         :arg duplication_rate (float): The percentage of duplicate elements (0 to 1): no_duplicates / no_elements.
         :arg duplicate_count (int): The number of specific duplicate elements.
-        :arg data_range (tuple): The range of values for the generated elements.
         """
         self.size = size
         self.duplication_rate = duplication_rate
         self.duplicate_count = duplicate_count
-        self.data_range = data_range
+        self.data_range = (0, size) if data_range is None else data_range
 
         if duplication_rate > 0:
-            max_unique_elements = data_range[1] - data_range[0] + 1
+            max_unique_elements = self.data_range[1] - self.data_range[0] + 1
             unique_count = int(self.size * (1 - self.duplication_rate))
             if unique_count > max_unique_elements:
                 raise ValueError("Duplication rate too high for the given data range. Possible value: %0.3f" % (max_unique_elements/size))

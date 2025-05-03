@@ -1,3 +1,8 @@
+import os
+from readline import insert_text
+
+from matplotlib.pyplot import title
+
 from trees.BoolBTree import BoolBTree
 from trees.LLBTree import LLBTree
 from benchmarking.utils import time_call
@@ -8,65 +13,41 @@ import numpy as np
 from timeseries import Timeseries, filter_outliers, moving_average
 
 
-
 class InsertBenchmark:
-    def __init__(self, tree):
+    def __init__(self):
         super()
-        self.tree = tree
-        self.last_run = None
-        self.gen = None
+        self.last_run = {}
+        self.values = None
+
+    def run_benchmark(self, size, duplication_rate, sample_every=1, data_range=None):
+        gen = BenchDataGenerator(size, duplication_rate, 0, data_range)
+        self.values = gen.generate_random_data()
+        return {
+            "BTree": self.insert_bench(BTree(), sample_every),
+            "BoolBTree": self.insert_bench(BoolBTree(), sample_every),
+            "LLBTree": self.insert_bench(LLBTree(), sample_every)
+        }
 
     def run_all(self):
-        self.last_run = {
-            # "Insert 1000 duplicates": {
-            #     "BTree": self.insert_bench_dup_rate(BTree(), 1_000, 1.0, (1, 200)),
-            #     "BoolBTree": self.insert_bench_dup_rate(BoolBTree(), 1_000, 1.0, (1, 200)),
-            #     "LLBTree": self.insert_bench_dup_rate(LLBTree(), 1_000, 1.0, (1, 200))
-            # },
-            # "Insert 10000 duplicates": {
-            #     "BTree": self.insert_bench_dup_rate(BTree(), 10_000, 1.0, (1, 200)),
-            #     "BoolBTree": self.insert_bench_dup_rate(BoolBTree(), 10_000, 1.0, (1, 200)),
-            #     "LLBTree": self.insert_bench_dup_rate(LLBTree(), 10_000, 1.0, (1, 200))
-            # },
-            # "Insert 1000000 duplicates": {
-            #     "BoolBTree": self.insert_bench_dup_rate(BoolBTree(), 1_000_000, 1.0, (1, 200), 100),
-            #     "LLBTree": self.insert_bench_dup_rate(LLBTree(), 1_000_000, 1.0, (1, 200), 100)
-            # },
-            "Insert 1000 elements 0.25 duplication rate": {
-                "BTree": self.insert_bench_dup_rate(BTree(), 1_000, 0.25, (1, 1500)),
-                "BoolBTree": self.insert_bench_dup_rate(BoolBTree(), 1_000, 0.25, (1, 1500)),
-                "LLBTree": self.insert_bench_dup_rate(LLBTree(), 1_000, 0.25, (1, 1500))
-            },
-            # "Insert 10000 elements 0.25 duplication rate": {
-            #     "BTree": self.insert_bench_dup_rate(BTree(), 10_000, 0.25, (1, 100000)),
-            #     "BoolBTree": self.insert_bench_dup_rate(BoolBTree(), 10_000, 0.25, (1, 100000)),
-            #     "LLBTree": self.insert_bench_dup_rate(LLBTree(), 10_000, 0.25, (1, 100000))
-            # },
-            # "Insert 1000000 elements 0.25 duplication rate": {
-            #     "BTree": self.insert_bench_dup_rate(BTree(), 1_000_000, 0.25, (1, 1_000_000), 100),
-            #     "BoolBTree": self.insert_bench_dup_rate(BoolBTree(), 1_000_000, 0.25, (1, 1_000_000), 100),
-            #     "LLBTree": self.insert_bench_dup_rate(LLBTree(), 1_000_000, 0.25, (1, 1_000_000), 100)
-            # },
-            "Insert 1000 elements 0.50 duplication rate": {
-                "BTree": self.insert_bench_dup_rate(BTree(), 1_000, 0.50, (1, 1500)),
-                "BoolBTree": self.insert_bench_dup_rate(BoolBTree(), 1_000, 0.50, (1, 1500)),
-                "LLBTree": self.insert_bench_dup_rate(LLBTree(), 1_000, 0.50, (1, 1500))
-            },
-            "Insert 1000 elements 0.75 duplication rate": {
-                "BTree": self.insert_bench_dup_rate(BTree(), 1_000, 0.75, (1, 1500)),
-                "BoolBTree": self.insert_bench_dup_rate(BoolBTree(), 1_000, 0.75, (1, 1500)),
-                "LLBTree": self.insert_bench_dup_rate(LLBTree(), 1_000, 0.75, (1, 1500))
-            },
-        }
+        self.last_run["Insert 1000 elements 0.25 duplication rate"] = self.run_benchmark(1_000, 0.25)
+        self.last_run["Insert 1000 elements 0.50 duplication rate"] = self.run_benchmark(1_000, 0.50)
+        self.last_run["Insert 1000 elements 0.75 duplication rate"] = self.run_benchmark(1_000, 0.75)
+        self.last_run["Insert 1000 duplicates"] = self.run_benchmark(1_000, 1.0)
+        self.last_run["Insert 10000 elements 0.25 duplication rate"] = self.run_benchmark(10_000, 0.25)
+        self.last_run["Insert 10000 elements 0.50 duplication rate"] = self.run_benchmark(10_000, 0.50)
+        self.last_run["Insert 10000 elements 0.75 duplication rate"] = self.run_benchmark(10_000, 0.75)
+        self.last_run["Insert 10000 duplicates"] = self.run_benchmark(10_000, 1.0)
+        self.last_run["Insert 1000000 elements 0.25 duplication rate"] = self.run_benchmark(1_000_000, 0.25,
+                                                                                            sample_every=100)
+        self.last_run["Insert 1000000 elements 0.50 duplication rate"] = self.run_benchmark(1_000_000, 0.50)
+        self.last_run["Insert 1000000 elements 0.75 duplication rate"] = self.run_benchmark(1_000_000, 0.75)
+        self.last_run["Insert 1000000 duplicates"] = self.run_benchmark(1_000_000, 1.0, sample_every=100)
         return self.last_run
 
-    def insert_bench_dup_rate(self, tree: BTree, batch_size: int, duplication_rate: float, random_range: tuple, sample_every: int = 1):
-        gen = BenchDataGenerator(batch_size, duplication_rate, 0, random_range)
-
-        data1 = gen.generate_random_data()
+    def insert_bench(self, tree, sample_every: int = 1):
         times = []
 
-        for i, value in enumerate(data1):
+        for i, value in enumerate(self.values):
             if i % sample_every == 0:
                 times.append(
                     (
@@ -80,7 +61,8 @@ class InsertBenchmark:
         times = np.array(times)
         return times
 
-    def run_all_and_plot(self, remove_outliers = False, average = False, zscore_upper_limit = 2, averaging_window_size = 5):
+    def run_all_and_plot(self, remove_outliers=False, average=False, zscore_upper_limit=2, averaging_window_size=5,
+                         export=""):
         """
         Runs all the tests defined in run_all, or uses cached result if available.
         Plots the results.
@@ -102,21 +84,27 @@ class InsertBenchmark:
 
                 if remove_outliers:
                     test_result = filter_outliers(test_result, zscore_upper_limit=zscore_upper_limit)
-                    test_title = test_title + " (filtered)"
+                    test_title = test_title
 
                 if average:
                     test_result = moving_average(test_result, window_size=averaging_window_size)
-                    test_title = test_title + " (averaged)"
+                    test_title = test_title
 
                 x = test_result[:, 0]
                 y = test_result[:, 1]
 
                 plt.plot(x, y, label=test_title)
 
-            plt.ylabel("seconds")
-            plt.xlabel("n. of elements")
+            plt.ylabel("Runtime (seconds)")
+            plt.xlabel("Nr. of elements")
             plt.legend()
-            plt.title(fixture_title)
+            plt.title(f"{fixture_title} filtered averaged({averaging_window_size})")
+
+            if export:
+                os.makedirs(f"plots/{export}", exist_ok=True)
+                np.savetxt(f"plots/{export}/{fixture_title}.csv", test_result, delimiter=",", header="x,y", comments='')
+                plt.savefig(f"plots/{export}/{fixture_title}.png")
+
             plt.show()
 
         return fixtures
