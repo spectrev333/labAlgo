@@ -1,4 +1,4 @@
-from LLIterator import LLIterator
+from trees.LLIterator import LLIterator
 
 
 class LLBTreeNodeData:

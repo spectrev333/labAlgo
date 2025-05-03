@@ -1,7 +1,7 @@
 from fontTools.misc.cython import returns
-from LLBTreeNodeData import LLBTreeNodeData
-from BTreeNode import BTreeNode
-from LLIterator import LLIterator
+from trees.LLBTreeNodeData import LLBTreeNodeData
+from trees.BTreeNode import BTreeNode
+from trees.LLIterator import LLIterator
 
 
 class LLBTreeNode(BTreeNode):

@@ -1,6 +1,6 @@
 import random
 
-class TestDataGenerator:
+class BenchDataGenerator:
     """
     A class for generating test data for binary search tree performance evaluation.
     """

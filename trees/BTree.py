@@ -1,4 +1,4 @@
-from BTreeNode import BTreeNode
+from trees.BTreeNode import BTreeNode
 
 class BTree:
     """

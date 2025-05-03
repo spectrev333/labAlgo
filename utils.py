@@ -1,7 +1,8 @@
+from time import time
+from typing import Callable
 import networkx as nx
-from networkx.drawing.nx_agraph import graphviz_layout
 import matplotlib.pyplot as plt
-from BTree import BTree
+from trees.BTree import BTree
 
 
 def BTree_to_graphviz(tree):
@@ -38,3 +39,14 @@ def visualize(tree: BTree):
             node_size=1000, node_color="lightblue", edge_color="gray", font_size=12)
 
     plt.show()
+
+def time_call(fun: Callable, args: tuple | list, times: int = 1):
+    total = 0.0
+    for i in range(times):
+        start = time()
+        fun(*args)
+        end = time()
+        total += (end - start)
+    avg = total / times
+    # print("avg exec time %0.3fs. (%d runs)" % (avg, times))
+    return avg

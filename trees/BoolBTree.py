@@ -1,7 +1,7 @@
 from re import search
 
-from BTree import BTree
-from BoolBTreeNode import BoolBTreeNode
+from trees.BTree import BTree
+from trees.BoolBTreeNode import BoolBTreeNode
 
 class BoolBTree(BTree):
     """
