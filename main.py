@@ -11,4 +11,4 @@ from FindBenchmark import FindBenchmark
 
 find_benchmark = FindBenchmark()
 
-find_benchmark.run_all_and_plot()
+find_benchmark.run_all_and_plot(export="find-normal")

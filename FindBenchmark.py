@@ -15,7 +15,7 @@ class FindBenchmark:
     def __init__(self):
         self.last_run = {}
 
-    def search_bench(self, tree, values, search_keys, collect = False):
+    def find_all_bench(self, tree, values, search_keys, collect = False):
         # Fill the treee
         for value in values:
             tree.insert_key(value)
@@ -31,35 +31,55 @@ class FindBenchmark:
             )
         return np.average(times), np.std(times)
 
+    def find_bench(self, tree, values, search_keys):
+        # Fill the treee
+        for value in values:
+            tree.insert_key(value)
+
+        # Measure search times
+        times = []
+        for value in search_keys:
+            time, res = time_call_return(tree.find, [value], times=5)
+            times.append(
+                time
+            )
+        return np.average(times), np.std(times)
+
     def run_benchmark(self, size, duplication_rate, data_range=None):
         gen = BenchDataGenerator(size, duplication_rate, 0, data_range)
         values = gen.generate_random_data()
         search_keys = gen.generate_search_keys(values)
-        return {
-            "BTree": self.search_bench(BTree(), values, search_keys),
-            "BoolBTree": self.search_bench(BoolBTree(), values, search_keys),
-            "LLBTree": self.search_bench(LLBTree(), values, search_keys),
-            "LLBTree (collect)": self.search_bench(LLBTree(), values, search_keys, collect=True),
+        self.last_run["find_all avg time %d elements, %.2f dup. rate" % (size, duplication_rate)] =  {
+            "BTree": self.find_all_bench(BTree(), values, search_keys),
+            "BoolBTree": self.find_all_bench(BoolBTree(), values, search_keys),
+            "LLBTree": self.find_all_bench(LLBTree(), values, search_keys),
+            "LLBTree (collect)": self.find_all_bench(LLBTree(), values, search_keys, collect=True),
+        }
+        self.last_run["find avg time %d elements, %.2f dup. rate" % (size, duplication_rate)] = {
+            "BTree": self.find_bench(BTree(), values, search_keys),
+            "BoolBTree": self.find_bench(BoolBTree(), values, search_keys),
+            "LLBTree": self.find_bench(LLBTree(), values, search_keys),
+            "LLBTree (collect)": self.find_bench(LLBTree(), values, search_keys),
         }
 
     def run_all(self):
-        self.last_run["find_all avg time 1000 elements, 0.05 duplication rate"] = self.run_benchmark(1000, 0.05)
-        self.last_run["find_all avg time 1000 elements, 0.15 duplication rate"] = self.run_benchmark(1000, 0.15)
-        self.last_run["find_all avg time 1000 elements, 0.25 duplication rate"] = self.run_benchmark(1000, 0.25)
-        self.last_run["find_all avg time 1000 elements, 0.50 duplication rate"] = self.run_benchmark(1000, 0.50)
-        self.last_run["find_all avg time 1000 elements, 0.75 duplication rate"] = self.run_benchmark(1000, 0.75)
-        self.last_run["find_all avg time 1000 elements, 0.90 duplication rate"] = self.run_benchmark(1000, 0.90)
-        self.last_run["find_all avg time 1000 elements, 0.95 duplication rate"] = self.run_benchmark(1000, 0.95)
-        self.last_run["find_all avg time 1000 elements, 0.99 duplication rate"] = self.run_benchmark(1000, 0.99)
+        self.run_benchmark(1000, 0.05)
+        self.run_benchmark(1000, 0.15)
+        self.run_benchmark(1000, 0.25)
+        self.run_benchmark(1000, 0.50)
+        self.run_benchmark(1000, 0.75)
+        self.run_benchmark(1000, 0.90)
+        self.run_benchmark(1000, 0.95)
+        self.run_benchmark(1000, 0.99)
 
-        self.last_run["find_all avg time 10000 elements, 0.05 duplication rate"] = self.run_benchmark(10000, 0.05)
-        self.last_run["find_all avg time 10000 elements, 0.15 duplication rate"] = self.run_benchmark(10000, 0.15)
-        self.last_run["find_all avg time 10000 elements, 0.25 duplication rate"] = self.run_benchmark(10000, 0.25)
-        self.last_run["find_all avg time 10000 elements, 0.50 duplication rate"] = self.run_benchmark(10000, 0.50)
-        self.last_run["find_all avg time 10000 elements, 0.75 duplication rate"] = self.run_benchmark(10000, 0.75)
-        self.last_run["find_all avg time 10000 elements, 0.90 duplication rate"] = self.run_benchmark(10000, 0.90)
-        self.last_run["find_all avg time 10000 elements, 0.95 duplication rate"] = self.run_benchmark(10000, 0.95)
-        self.last_run["find_all avg time 10000 elements, 0.99 duplication rate"] = self.run_benchmark(10000, 0.99)
+        self.run_benchmark(10000, 0.05)
+        self.run_benchmark(10000, 0.15)
+        self.run_benchmark(10000, 0.25)
+        self.run_benchmark(10000, 0.50)
+        self.run_benchmark(10000, 0.75)
+        self.run_benchmark(10000, 0.90)
+        self.run_benchmark(10000, 0.95)
+        self.run_benchmark(10000, 0.99)
 
     def run_all_and_plot(self, export=""):
         if not self.last_run:
