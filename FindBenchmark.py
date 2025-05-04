@@ -125,6 +125,10 @@ class FindBenchmark:
             avg_times = [item[0] for item in data.values()] # Average search time
             std_devs = [item[1] for item in data.values()] # Standard deviation
 
+            if export:
+                for name, avg, std in zip(names, avg_times, std_devs):
+                    all_data.append([benchmark_name, name, avg, std])
+
             # Bar plot with y error
             plt.figure(figsize=(8, 6))
             plt.bar(names, avg_times, color='skyblue', label="Average Time")
