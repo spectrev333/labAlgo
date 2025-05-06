@@ -38,7 +38,7 @@ class FindBenchmark:
             times.append(
                 time
             )
-        return np.average(times), np.std(times)
+        return times
 
     def find_bench(self, tree, values, search_keys):
         """
@@ -59,7 +59,7 @@ class FindBenchmark:
             times.append(
                 time
             )
-        return np.average(times), np.std(times)
+        return times
 
     def run_benchmark(self, size, duplication_rate, data_range=None):
         """
@@ -78,10 +78,9 @@ class FindBenchmark:
             "LLBTree (collect)": self.find_all_bench(LLBTree(), values, search_keys, collect=True),
         }
         self.last_run["find avg time %d elements, %.2f dup. rate" % (size, duplication_rate)] = {
-            "BTree": self.find_bench(BTree(), values, search_keys),
-            "BoolBTree": self.find_bench(BoolBTree(), values, search_keys),
-            "LLBTree": self.find_bench(LLBTree(), values, search_keys),
-            "LLBTree (collect)": self.find_bench(LLBTree(), values, search_keys),
+            "BTree": self.find_bench(BTree(), values, [-1, -2, -3]),
+            "BoolBTree": self.find_bench(BoolBTree(), values, [-1, -2, -3]),
+            "LLBTree": self.find_bench(LLBTree(), values, [-1, -2, -3]),
         }
 
     def run_all(self):
@@ -122,22 +121,19 @@ class FindBenchmark:
             print(f"{benchmark_name}: {data}")
 
             names = list(data.keys()) # Data structure name
-            avg_times = [item[0] for item in data.values()] # Average search time
-            std_devs = [item[1] for item in data.values()] # Standard deviation
+            times = data.values() # Times array
 
             if export:
-                for name, avg, std in zip(names, avg_times, std_devs):
-                    all_data.append([benchmark_name, name, avg, std])
+                for name, time_array in zip(names, times):
+                    all_data.append([benchmark_name, name, np.average(time_array), np.std(time_array)])
 
             # Bar plot with y error
             plt.figure(figsize=(8, 6))
-            plt.bar(names, avg_times, color='skyblue', label="Average Time")
-            plt.errorbar(names, avg_times, yerr=std_devs, fmt='none', capsize=5, color='black', label="Std Dev")
+            plt.boxplot(times, labels=names, showfliers=False, patch_artist=True, boxprops=dict(facecolor='skyblue'), medianprops=dict(color='black'))
             plt.xlabel("Data Structure")
             plt.ylabel("Runtime (seconds) (average over 5 runs)")
             plt.title(benchmark_name)
             plt.grid(axis='y', linestyle='--')
-            plt.legend()
             plt.tight_layout()
 
             # Save benchmark plot

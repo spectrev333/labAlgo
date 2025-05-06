@@ -20,28 +20,28 @@ class InsertBenchmark:
         self.values = None
 
     def run_benchmark(self, size, duplication_rate, sample_every=1, data_range=None):
+        print(f"Benchmarking insert... ({size} elements, {duplication_rate} dup. rate)")
         gen = BenchDataGenerator(size, duplication_rate, 0, data_range)
         self.values = gen.generate_random_data()
-        return {
+        self.last_run["Insert %d elements, %.2f dup. rate" % (size, duplication_rate)] = {
             "BTree": self.insert_bench(BTree(), sample_every),
             "BoolBTree": self.insert_bench(BoolBTree(), sample_every),
             "LLBTree": self.insert_bench(LLBTree(), sample_every)
         }
 
     def run_all(self):
-        self.last_run["Insert 1000 elements 0.25 duplication rate"] = self.run_benchmark(1_000, 0.25)
-        self.last_run["Insert 1000 elements 0.50 duplication rate"] = self.run_benchmark(1_000, 0.50)
-        self.last_run["Insert 1000 elements 0.75 duplication rate"] = self.run_benchmark(1_000, 0.75)
-        self.last_run["Insert 1000 duplicates"] = self.run_benchmark(1_000, 1.0)
-        self.last_run["Insert 10000 elements 0.25 duplication rate"] = self.run_benchmark(10_000, 0.25)
-        self.last_run["Insert 10000 elements 0.50 duplication rate"] = self.run_benchmark(10_000, 0.50)
-        self.last_run["Insert 10000 elements 0.75 duplication rate"] = self.run_benchmark(10_000, 0.75)
-        self.last_run["Insert 10000 duplicates"] = self.run_benchmark(10_000, 1.0)
-        self.last_run["Insert 1000000 elements 0.25 duplication rate"] = self.run_benchmark(1_000_000, 0.25,
-                                                                                            sample_every=100)
-        self.last_run["Insert 1000000 elements 0.50 duplication rate"] = self.run_benchmark(1_000_000, 0.50)
-        self.last_run["Insert 1000000 elements 0.75 duplication rate"] = self.run_benchmark(1_000_000, 0.75)
-        self.last_run["Insert 1000000 duplicates"] = self.run_benchmark(1_000_000, 1.0, sample_every=100)
+        self.run_benchmark(1_000, 0.25)
+        self.run_benchmark(1_000, 0.50)
+        self.run_benchmark(1_000, 0.75)
+        self.run_benchmark(1_000, 0.90)
+        self.run_benchmark(1_000, 0.99)
+        self.run_benchmark(1_000, 1.0)
+        self.run_benchmark(10_000, 0.95)
+        self.run_benchmark(10_000, 0.99)
+        self.run_benchmark(10_000, 0.999)
+        self.run_benchmark(10_000, 1.0)
+        # self.run_benchmark(1_000_000, 0.95, sample_every=100)
+        # self.run_benchmark(1_000_000, 0.99, sample_every=100)
         return self.last_run
 
     def insert_bench(self, tree, sample_every: int = 1):
@@ -84,21 +84,22 @@ class InsertBenchmark:
 
                 if remove_outliers:
                     test_result = filter_outliers(test_result, zscore_upper_limit=zscore_upper_limit)
-                    test_title = test_title
 
                 if average:
                     test_result = moving_average(test_result, window_size=averaging_window_size)
-                    test_title = test_title
 
                 x = test_result[:, 0]
                 y = test_result[:, 1]
 
                 plt.plot(x, y, label=test_title)
 
+            title = f"{fixture_title}"
+            title += " filtered" if remove_outliers else ""
+            title += f" averaged({averaging_window_size})" if average else ""
             plt.ylabel("Runtime (seconds)")
             plt.xlabel("Nr. of elements")
             plt.legend()
-            plt.title(f"{fixture_title} filtered averaged({averaging_window_size})")
+            plt.title(title)
 
             if export:
                 os.makedirs(f"plots/{export}", exist_ok=True)

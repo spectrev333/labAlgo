@@ -14,7 +14,7 @@ class BenchDataGenerator:
         self.size = size
         self.duplication_rate = duplication_rate
         self.duplicate_count = duplicate_count
-        self.data_range = (0, size) if data_range is None else data_range
+        self.data_range = (0, int(size * (1 - duplication_rate) + 1)) if data_range is None else data_range
 
         if duplication_rate > 0:
             max_unique_elements = self.data_range[1] - self.data_range[0] + 1
