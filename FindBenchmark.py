@@ -77,11 +77,11 @@ class FindBenchmark:
             "LLBTree": self.find_all_bench(LLBTree(), values, search_keys),
             "LLBTree (collect)": self.find_all_bench(LLBTree(), values, search_keys, collect=True),
         }
-        self.last_run["find avg time %d elements, %.2f dup. rate" % (size, duplication_rate)] = {
-            "BTree": self.find_bench(BTree(), values, [-1, -2, -3]),
-            "BoolBTree": self.find_bench(BoolBTree(), values, [-1, -2, -3]),
-            "LLBTree": self.find_bench(LLBTree(), values, [-1, -2, -3]),
-        }
+        # self.last_run["find avg time %d elements, %.2f dup. rate" % (size, duplication_rate)] = {
+        #     "BTree": self.find_bench(BTree(), values, [-1, -2, -3]),
+        #     "BoolBTree": self.find_bench(BoolBTree(), values, [-1, -2, -3]),
+        #     "LLBTree": self.find_bench(LLBTree(), values, [-1, -2, -3]),
+        # }
 
     def run_all(self):
         """
