@@ -118,7 +118,7 @@ class FindBenchmark:
         header = ["Benchmark", "Data Structure", "Average Time", "Standard Deviation"]
 
         for benchmark_name, data in self.last_run.items():
-            print(f"{benchmark_name}: {data}")
+            # print(f"{benchmark_name}: {data}")
 
             names = list(data.keys()) # Data structure name
             times = data.values() # Times array

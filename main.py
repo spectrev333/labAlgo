@@ -3,8 +3,8 @@ from FindBenchmark import FindBenchmark
 
 insert_bench = InsertBenchmark()
 
-insert_bench.run_all_and_plot(export="normal")
-insert_bench.run_all_and_plot(remove_outliers=True, average=True, export="filtered_averaged")
+insert_bench.run_all_and_plot(export="insert-results")
+insert_bench.run_all_and_plot(remove_outliers=True, average=True, export="insert-results-filtered")
 
 find_benchmark = FindBenchmark()
 
