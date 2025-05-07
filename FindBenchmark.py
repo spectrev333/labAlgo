@@ -68,6 +68,7 @@ class FindBenchmark:
         :param duplication_rate: dataset duplication rate
         :param data_range: leave None, trust me
         """
+        print(f"Benchmarking find_all... ({size} elements, {duplication_rate} dup. rate)")
         gen = BenchDataGenerator(size, duplication_rate, 0, data_range)
         values = gen.generate_random_data()
         search_keys = gen.generate_search_keys(values)

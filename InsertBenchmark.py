@@ -105,6 +105,7 @@ class InsertBenchmark:
                 os.makedirs(f"plots/{export}", exist_ok=True)
                 np.savetxt(f"plots/{export}/{fixture_title}.csv", test_result, delimiter=",", header="x,y", comments='')
                 plt.savefig(f"plots/{export}/{fixture_title}.png")
+                print(f"plot saved at plots/{export}/{fixture_title}.png")
 
             plt.show()
 
